@@ -1,5 +1,9 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { Upload, MapPin, Calendar, User, Mail, Phone, ArrowLeft } from 'lucide-react';
+import Toast from './Toast';
+import { isValidEmail, isValidPhone, isNonEmpty } from '../utils/validation';
+import useLocalStorage from '../hooks/useLocalStorage';
 import { ItemStatus, ItemCategory, LostFoundItem } from '../App';
 
 interface PostItemProps {
@@ -36,8 +40,10 @@ const locations = [
   'Other',
 ];
 
+
 const PostItem: React.FC<PostItemProps> = ({ onSubmit, onCancel, darkMode }) => {
-  const [formData, setFormData] = useState({
+  // Use localStorage to save draft
+  const [draft, setDraft] = useLocalStorage('postItemDraft', {
     title: '',
     description: '',
     category: 'other' as ItemCategory,
@@ -49,14 +55,29 @@ const PostItem: React.FC<PostItemProps> = ({ onSubmit, onCancel, darkMode }) => 
     imageUrl: '',
     dateOccurred: '',
   });
-
-  // Removed unused imageFile state
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [formData, setFormData] = useState(draft);
+  const [imagePreview, setImagePreview] = useState<string | null>(draft.imageUrl || null);
+  const [toast, setToast] = useState<{ message: string; type?: 'success' | 'error' | 'info' } | null>(null);
   const maxDescriptionLength = 300;
+
+  // Save draft to localStorage on formData change
+  useEffect(() => {
+    setDraft({ ...formData, imageUrl: imagePreview || '' });
+    // eslint-disable-next-line
+  }, [formData, imagePreview]);
+
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (!file.type.startsWith('image/')) {
+        setToast({ message: 'Only image files are allowed.', type: 'error' });
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        setToast({ message: 'Image size must be under 10MB.', type: 'error' });
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (e) => {
         setImagePreview(e.target?.result as string);
@@ -65,16 +86,86 @@ const PostItem: React.FC<PostItemProps> = ({ onSubmit, onCancel, darkMode }) => 
     }
   };
 
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Validation
+    if (!isNonEmpty(formData.title)) {
+      setToast({ message: 'Title is required.', type: 'error' });
+      return;
+    }
+    if (!isNonEmpty(formData.description)) {
+      setToast({ message: 'Description is required.', type: 'error' });
+      return;
+    }
+    if (!isNonEmpty(formData.location)) {
+      setToast({ message: 'Location is required.', type: 'error' });
+      return;
+    }
+    if (!isNonEmpty(formData.contactName)) {
+      setToast({ message: 'Contact name is required.', type: 'error' });
+      return;
+    }
+    if (!isValidEmail(formData.contactEmail)) {
+      setToast({ message: 'Please enter a valid email address.', type: 'error' });
+      return;
+    }
+    if (formData.contactPhone && !isValidPhone(formData.contactPhone)) {
+      setToast({ message: 'Please enter a valid phone number.', type: 'error' });
+      return;
+    }
+    if (!formData.dateOccurred) {
+      setToast({ message: 'Date is required.', type: 'error' });
+      return;
+    }
     const itemData: Omit<LostFoundItem, 'id' | 'datePosted'> = {
       ...formData,
       imageUrl: imagePreview || undefined,
     };
     onSubmit(itemData);
-  };
+    setToast({ message: 'Item posted successfully!', type: 'success' });
 
-  const handleReset = () => {
+    // Browser notification for lost/found
+    if ('Notification' in window) {
+      if (Notification.permission === 'granted') {
+        new Notification(
+          formData.status === 'lost' ? 'Lost Item Posted' : 'Found Item Posted',
+          {
+            body: formData.status === 'lost'
+              ? `You posted a lost item: ${formData.title}`
+              : `You posted a found item: ${formData.title}`,
+            icon: '/favicon.ico',
+          }
+        );
+      } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            new Notification(
+              formData.status === 'lost' ? 'Lost Item Posted' : 'Found Item Posted',
+              {
+                body: formData.status === 'lost'
+                  ? `You posted a lost item: ${formData.title}`
+                  : `You posted a found item: ${formData.title}`,
+                icon: '/favicon.ico',
+              }
+            );
+          }
+        });
+      }
+    }
+
+    setDraft({
+      title: '',
+      description: '',
+      category: 'other',
+      status: 'lost',
+      location: '',
+      contactName: '',
+      contactEmail: '',
+      contactPhone: '',
+      imageUrl: '',
+      dateOccurred: '',
+    });
     setFormData({
       title: '',
       description: '',
@@ -90,8 +181,41 @@ const PostItem: React.FC<PostItemProps> = ({ onSubmit, onCancel, darkMode }) => 
     setImagePreview(null);
   };
 
+
+  const handleReset = () => {
+    setFormData({
+      title: '',
+      description: '',
+      category: 'other',
+      status: 'lost',
+      location: '',
+      contactName: '',
+      contactEmail: '',
+      contactPhone: '',
+      imageUrl: '',
+      dateOccurred: '',
+    });
+    setImagePreview(null);
+    setDraft({
+      title: '',
+      description: '',
+      category: 'other',
+      status: 'lost',
+      location: '',
+      contactName: '',
+      contactEmail: '',
+      contactPhone: '',
+      imageUrl: '',
+      dateOccurred: '',
+    });
+    setToast({ message: 'Form reset.', type: 'info' });
+  };
+
   return (
     <div className={darkMode ? 'min-h-screen bg-gray-900 text-gray-100 py-8' : 'min-h-screen bg-gray-50 text-gray-900 py-8'}>
+      {toast && (
+        <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
+      )}
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg border border-gray-700' : 'bg-white rounded-xl shadow-lg'}>
           <div className={darkMode ? 'px-6 py-4 border-b border-gray-700 flex items-center space-x-4' : 'px-6 py-4 border-b border-gray-200 flex items-center space-x-4'}>

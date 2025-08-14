@@ -52,6 +52,7 @@ const PostItem: React.FC<PostItemProps> = ({ onSubmit, onCancel, darkMode }) => 
 
   // Removed unused imageFile state
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const maxDescriptionLength = 300;
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -66,13 +67,27 @@ const PostItem: React.FC<PostItemProps> = ({ onSubmit, onCancel, darkMode }) => 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
     const itemData: Omit<LostFoundItem, 'id' | 'datePosted'> = {
       ...formData,
       imageUrl: imagePreview || undefined,
     };
-    
     onSubmit(itemData);
+  };
+
+  const handleReset = () => {
+    setFormData({
+      title: '',
+      description: '',
+      category: 'other',
+      status: 'lost',
+      location: '',
+      contactName: '',
+      contactEmail: '',
+      contactPhone: '',
+      imageUrl: '',
+      dateOccurred: '',
+    });
+    setImagePreview(null);
   };
 
   return (
@@ -227,12 +242,16 @@ const PostItem: React.FC<PostItemProps> = ({ onSubmit, onCancel, darkMode }) => 
               </label>
               <textarea
                 required
+                maxLength={maxDescriptionLength}
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={4}
                 placeholder="Provide detailed description including size, color, brand, distinguishing features..."
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
+              <div className="text-right text-xs mt-1" style={{ color: formData.description.length >= maxDescriptionLength ? '#dc2626' : '#6b7280' }}>
+                {formData.description.length}/{maxDescriptionLength} characters
+              </div>
             </div>
 
             {/* Location and Date */}
@@ -334,6 +353,13 @@ const PostItem: React.FC<PostItemProps> = ({ onSubmit, onCancel, darkMode }) => 
                 className="flex-1 bg-gray-200 text-gray-800 py-3 px-6 rounded-lg font-medium hover:bg-gray-300 transition-colors"
               >
                 Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleReset}
+                className="flex-1 bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+              >
+                Reset
               </button>
             </div>
           </form>

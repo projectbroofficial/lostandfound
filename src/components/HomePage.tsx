@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, MapPin, Plus, ArrowRight, Shield, Users, Clock, Heart } from 'lucide-react';
+import { Search, MapPin, Plus, ArrowRight, Heart } from 'lucide-react';
 import { LostFoundItem } from '../App';
 import ItemCard from './ItemCard';
 
@@ -8,9 +8,10 @@ interface HomePageProps {
   onPostClick: () => void;
   onBrowseClick: () => void;
   onViewItem: (item: LostFoundItem) => void;
+  darkMode: boolean;
 }
 
-const HomePage: React.FC<HomePageProps> = ({ items, onPostClick, onBrowseClick, onViewItem }) => {
+const HomePage: React.FC<HomePageProps> = ({ items, onPostClick, onBrowseClick, onViewItem, darkMode }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
 
@@ -18,9 +19,9 @@ const HomePage: React.FC<HomePageProps> = ({ items, onPostClick, onBrowseClick, 
   const successStories = items.filter(item => item.resolved).length;
 
   return (
-    <div>
+    <div className={darkMode ? 'dark' : ''}>
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white">
+  <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 dark:text-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -79,10 +80,10 @@ const HomePage: React.FC<HomePageProps> = ({ items, onPostClick, onBrowseClick, 
       </section>
 
       {/* Quick Search */}
-      <section className="bg-white shadow-sm -mt-8 relative z-10">
+  <section className="bg-white shadow-sm -mt-8 relative z-10 dark:bg-gray-800 dark:text-gray-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-xl shadow-lg border p-6">
-            <h3 className="text-lg font-semibold mb-4 text-gray-900">Quick Search</h3>
+          <div className="bg-white rounded-xl shadow-lg border p-6 dark:bg-gray-900 dark:border-gray-700">
+            <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Quick Search</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -91,7 +92,7 @@ const HomePage: React.FC<HomePageProps> = ({ items, onPostClick, onBrowseClick, 
                   placeholder="What are you looking for?"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                 />
               </div>
               
@@ -100,7 +101,7 @@ const HomePage: React.FC<HomePageProps> = ({ items, onPostClick, onBrowseClick, 
                 <select
                   value={selectedLocation}
                   onChange={(e) => setSelectedLocation(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                 >
                   <option value="">Select Location</option>
                   <option value="downtown">Downtown</option>
@@ -113,7 +114,7 @@ const HomePage: React.FC<HomePageProps> = ({ items, onPostClick, onBrowseClick, 
               
               <button
                 onClick={onBrowseClick}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 dark:bg-blue-700 dark:hover:bg-blue-800"
               >
                 <Search className="h-5 w-5" />
                 <span>Search</span>
@@ -124,11 +125,11 @@ const HomePage: React.FC<HomePageProps> = ({ items, onPostClick, onBrowseClick, 
       </section>
 
       {/* How It Works */}
-      <section className="py-16 bg-gray-50">
+  <section className="py-16 bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">How It Works</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4 dark:text-gray-100">How It Works</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto dark:text-gray-300">
               Simple steps to reunite with your lost belongings or help others find theirs
             </p>
           </div>
@@ -138,8 +139,8 @@ const HomePage: React.FC<HomePageProps> = ({ items, onPostClick, onBrowseClick, 
               <div className="bg-blue-600 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
                 <Plus className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">1. Post Your Item</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">1. Post Your Item</h3>
+              <p className="text-gray-600 leading-relaxed dark:text-gray-300">
                 Upload a photo and description of what you've lost or found. Include location details to help with matching.
               </p>
             </div>
@@ -148,8 +149,8 @@ const HomePage: React.FC<HomePageProps> = ({ items, onPostClick, onBrowseClick, 
               <div className="bg-green-600 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
                 <Search className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">2. Search & Match</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">2. Search & Match</h3>
+              <p className="text-gray-600 leading-relaxed dark:text-gray-300">
                 Browse through local listings or let our system notify you of potential matches based on your item.
               </p>
             </div>
@@ -158,8 +159,8 @@ const HomePage: React.FC<HomePageProps> = ({ items, onPostClick, onBrowseClick, 
               <div className="bg-purple-600 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
                 <Heart className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">3. Reunite</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">3. Reunite</h3>
+              <p className="text-gray-600 leading-relaxed dark:text-gray-300">
                 Connect safely with the other person through our secure contact system and arrange the return.
               </p>
             </div>
@@ -169,16 +170,16 @@ const HomePage: React.FC<HomePageProps> = ({ items, onPostClick, onBrowseClick, 
 
       {/* Recent Items */}
       {recentItems.length > 0 && (
-        <section className="py-16">
+  <section className="py-16 dark:bg-gray-900 dark:text-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center mb-8">
               <div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">Recent Posts</h2>
-                <p className="text-gray-600">Latest items from your community</p>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2 dark:text-gray-100">Recent Posts</h2>
+                <p className="text-gray-600 dark:text-gray-300">Latest items from your community</p>
               </div>
               <button
                 onClick={onBrowseClick}
-                className="text-blue-600 font-medium hover:text-blue-700 transition-colors flex items-center space-x-2"
+                className="text-blue-600 font-medium hover:text-blue-700 transition-colors flex items-center space-x-2 dark:text-blue-400 dark:hover:text-blue-300"
               >
                 <span>View All</span>
                 <ArrowRight className="h-4 w-4" />
@@ -199,22 +200,22 @@ const HomePage: React.FC<HomePageProps> = ({ items, onPostClick, onBrowseClick, 
       )}
 
       {/* CTA Section */}
-      <section className="bg-blue-600 text-white py-16">
+  <section className="bg-blue-600 text-white py-16 dark:bg-gray-800 dark:text-gray-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Find Your Lost Item?</h2>
-          <p className="text-xl text-blue-100 mb-8">
+          <h2 className="text-3xl font-bold mb-4 dark:text-gray-100">Ready to Find Your Lost Item?</h2>
+          <p className="text-xl text-blue-100 mb-8 dark:text-blue-200">
             Join our community of helpful neighbors and start your search today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={onPostClick}
-              className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
+              className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-blue-50 transition-colors dark:bg-gray-900 dark:text-blue-400 dark:hover:bg-gray-700"
             >
               Post Lost Item
             </button>
             <button
               onClick={onPostClick}
-              className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
+              className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors dark:border-blue-400 dark:hover:bg-gray-900 dark:hover:text-blue-400"
             >
               Post Found Item
             </button>

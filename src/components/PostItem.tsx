@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Upload, MapPin, Calendar, User, Mail, Phone, ArrowLeft } from 'lucide-react';
 import { ItemStatus, ItemCategory, LostFoundItem } from '../App';
 
 interface PostItemProps {
   onSubmit: (item: Omit<LostFoundItem, 'id' | 'datePosted'>) => void;
   onCancel: () => void;
+  darkMode: boolean;
 }
 
 const categories: { value: ItemCategory; label: string }[] = [
@@ -35,7 +36,7 @@ const locations = [
   'Other',
 ];
 
-const PostItem: React.FC<PostItemProps> = ({ onSubmit, onCancel }) => {
+const PostItem: React.FC<PostItemProps> = ({ onSubmit, onCancel, darkMode }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -49,13 +50,12 @@ const PostItem: React.FC<PostItemProps> = ({ onSubmit, onCancel }) => {
     dateOccurred: '',
   });
 
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  // Removed unused imageFile state
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setImageFile(file);
       const reader = new FileReader();
       reader.onload = (e) => {
         setImagePreview(e.target?.result as string);
@@ -76,19 +76,19 @@ const PostItem: React.FC<PostItemProps> = ({ onSubmit, onCancel }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className={darkMode ? 'min-h-screen bg-gray-900 text-gray-100 py-8' : 'min-h-screen bg-gray-50 text-gray-900 py-8'}>
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-xl shadow-lg">
-          <div className="px-6 py-4 border-b border-gray-200 flex items-center space-x-4">
+        <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg border border-gray-700' : 'bg-white rounded-xl shadow-lg'}>
+          <div className={darkMode ? 'px-6 py-4 border-b border-gray-700 flex items-center space-x-4' : 'px-6 py-4 border-b border-gray-200 flex items-center space-x-4'}>
             <button
               onClick={onCancel}
-              className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className={darkMode ? 'p-2 text-gray-300 hover:text-white transition-colors' : 'p-2 text-gray-600 hover:text-gray-900 transition-colors'}
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Post an Item</h1>
-              <p className="text-gray-600">Help reunite items with their owners</p>
+              <h1 className={darkMode ? 'text-2xl font-bold text-gray-100' : 'text-2xl font-bold text-gray-900'}>Post an Item</h1>
+              <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>Help reunite items with their owners</p>
             </div>
           </div>
 
@@ -159,7 +159,7 @@ const PostItem: React.FC<PostItemProps> = ({ onSubmit, onCancel }) => {
                         type="button"
                         onClick={() => {
                           setImagePreview(null);
-                          setImageFile(null);
+                          // setImageFile(null); // removed unused imageFile
                         }}
                         className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
                       >

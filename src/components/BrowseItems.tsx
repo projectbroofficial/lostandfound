@@ -6,6 +6,7 @@ import ItemCard from './ItemCard';
 interface BrowseItemsProps {
   items: LostFoundItem[];
   onViewItem: (item: LostFoundItem) => void;
+  darkMode: boolean;
 }
 
 const categories: { value: ItemCategory | 'all'; label: string }[] = [
@@ -21,7 +22,7 @@ const categories: { value: ItemCategory | 'all'; label: string }[] = [
   { value: 'other', label: 'Other' },
 ];
 
-const BrowseItems: React.FC<BrowseItemsProps> = ({ items, onViewItem }) => {
+const BrowseItems: React.FC<BrowseItemsProps> = ({ items, onViewItem, darkMode }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<ItemStatus | 'all'>('all');
   const [categoryFilter, setCategoryFilter] = useState<ItemCategory | 'all'>('all');
@@ -65,17 +66,17 @@ const BrowseItems: React.FC<BrowseItemsProps> = ({ items, onViewItem }) => {
   const resolvedCount = items.filter(item => item.resolved).length;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className={darkMode ? 'min-h-screen bg-gray-900 text-gray-100 py-8' : 'min-h-screen bg-gray-50 text-gray-900 py-8'}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Browse Items</h1>
-          <p className="text-gray-600">Search through lost and found items in your area</p>
+          <h1 className={darkMode ? 'text-3xl font-bold text-gray-100 mb-2' : 'text-3xl font-bold text-gray-900 mb-2'}>Browse Items</h1>
+          <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>Search through lost and found items in your area</p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <div className="bg-white rounded-lg p-6 shadow-sm border">
+          <div className={darkMode ? 'bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-700' : 'bg-white rounded-lg p-6 shadow-sm border'}>
             <div className="flex items-center">
               <div className="bg-red-100 rounded-lg p-3 mr-4">
                 <Search className="h-6 w-6 text-red-600" />
@@ -87,7 +88,7 @@ const BrowseItems: React.FC<BrowseItemsProps> = ({ items, onViewItem }) => {
             </div>
           </div>
           
-          <div className="bg-white rounded-lg p-6 shadow-sm border">
+          <div className={darkMode ? 'bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-700' : 'bg-white rounded-lg p-6 shadow-sm border'}>
             <div className="flex items-center">
               <div className="bg-green-100 rounded-lg p-3 mr-4">
                 <MapPin className="h-6 w-6 text-green-600" />
@@ -99,7 +100,7 @@ const BrowseItems: React.FC<BrowseItemsProps> = ({ items, onViewItem }) => {
             </div>
           </div>
           
-          <div className="bg-white rounded-lg p-6 shadow-sm border">
+          <div className={darkMode ? 'bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-700' : 'bg-white rounded-lg p-6 shadow-sm border'}>
             <div className="flex items-center">
               <div className="bg-blue-100 rounded-lg p-3 mr-4">
                 <Calendar className="h-6 w-6 text-blue-600" />
@@ -113,15 +114,15 @@ const BrowseItems: React.FC<BrowseItemsProps> = ({ items, onViewItem }) => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
+  <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-sm border p-6 mb-8 border-gray-700' : 'bg-white rounded-xl shadow-sm border p-6 mb-8'}>
           <div className="flex items-center space-x-2 mb-4">
-            <Filter className="h-5 w-5 text-gray-500" />
-            <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+            <Filter className={darkMode ? 'h-5 w-5 text-gray-400' : 'h-5 w-5 text-gray-500'} />
+            <h3 className={darkMode ? 'text-lg font-semibold text-gray-100' : 'text-lg font-semibold text-gray-900'}>Filters</h3>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+              <label className={darkMode ? 'block text-sm font-medium text-gray-200 mb-2' : 'block text-sm font-medium text-gray-700 mb-2'}>Search</label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
@@ -129,17 +130,17 @@ const BrowseItems: React.FC<BrowseItemsProps> = ({ items, onViewItem }) => {
                   placeholder="Search items..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className={darkMode ? 'w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-900 text-gray-100' : 'w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'}
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+              <label className={darkMode ? 'block text-sm font-medium text-gray-200 mb-2' : 'block text-sm font-medium text-gray-700 mb-2'}>Status</label>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as ItemStatus | 'all')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={darkMode ? 'w-full px-3 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-900 text-gray-100' : 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'}
               >
                 <option value="all">All Items</option>
                 <option value="lost">Lost Items</option>
@@ -148,11 +149,11 @@ const BrowseItems: React.FC<BrowseItemsProps> = ({ items, onViewItem }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+              <label className={darkMode ? 'block text-sm font-medium text-gray-200 mb-2' : 'block text-sm font-medium text-gray-700 mb-2'}>Category</label>
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value as ItemCategory | 'all')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={darkMode ? 'w-full px-3 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-900 text-gray-100' : 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'}
               >
                 {categories.map(cat => (
                   <option key={cat.value} value={cat.value}>{cat.label}</option>
@@ -161,13 +162,13 @@ const BrowseItems: React.FC<BrowseItemsProps> = ({ items, onViewItem }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+              <label className={darkMode ? 'block text-sm font-medium text-gray-200 mb-2' : 'block text-sm font-medium text-gray-700 mb-2'}>Location</label>
               <input
                 type="text"
                 placeholder="Filter by location..."
                 value={locationFilter}
                 onChange={(e) => setLocationFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={darkMode ? 'w-full px-3 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-900 text-gray-100' : 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'}
               />
             </div>
           </div>
@@ -180,24 +181,24 @@ const BrowseItems: React.FC<BrowseItemsProps> = ({ items, onViewItem }) => {
                 onChange={(e) => setShowResolved(e.target.checked)}
                 className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
-              <span className="text-sm text-gray-700">Show resolved items</span>
+              <span className={darkMode ? 'text-sm text-gray-200' : 'text-sm text-gray-700'}>Show resolved items</span>
             </label>
           </div>
         </div>
 
         {/* Results */}
         <div className="mb-4">
-          <p className="text-gray-600">
+          <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
             Showing {filteredItems.length} of {items.length} items
           </p>
         </div>
 
         {/* Items Grid */}
         {filteredItems.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm border p-12 text-center">
+          <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-sm border border-gray-700 p-12 text-center' : 'bg-white rounded-xl shadow-sm border p-12 text-center'}>
             <Search className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No items found</h3>
-            <p className="text-gray-600 mb-6">
+            <h3 className={darkMode ? 'text-xl font-semibold text-gray-100 mb-2' : 'text-xl font-semibold text-gray-900 mb-2'}>No items found</h3>
+            <p className={darkMode ? 'text-gray-300 mb-6' : 'text-gray-600 mb-6'}>
               Try adjusting your search criteria or browse all items
             </p>
             <button
@@ -207,7 +208,7 @@ const BrowseItems: React.FC<BrowseItemsProps> = ({ items, onViewItem }) => {
                 setCategoryFilter('all');
                 setLocationFilter('');
               }}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className={darkMode ? 'bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-800 transition-colors' : 'bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors'}
             >
               Clear Filters
             </button>
